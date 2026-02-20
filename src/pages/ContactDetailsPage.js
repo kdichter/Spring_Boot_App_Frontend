@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link, useParams } from 'react-router-dom';
 import { getContact } from '../api/ContactService'
 import { updateContact, deleteContact, updatePhoto } from '../api/ContactService';
+import defaultIcon from '../assets/default_icon.jpg';
 import { toastError, toastSuccess } from '../api/ToastService';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -37,24 +38,7 @@ const ContactDetail = () => {
         inputRef.current.click();
     };
 
-    // Handle for updating the contact photo
-    // const updatePhotoo = async (file) => {
-    //     try {
-    //         const formData = new FormData();
-
-    //         formData.append('file', file);
-    //         formData.append('id', id);
-
-    //         await updatePhotoo(formData);
-
-    //         setContact((prev) => ({ ...prev, photoUrl: `${prev.photoUrl}?updated_at = ${new Date().getTime()}` }))
-    //         toastSuccess('Photo updated');
-    //     } catch (error) {
-    //         toastError(error.message);
-    //     }
-    // };
-
-    const updatePhotoo = async (file) => {
+    const updateImage = async (file) => {
         try {
             const previewUrl = URL.createObjectURL(file);
             setContact((prev) => ({ ...prev, photoUrl: previewUrl }));
@@ -111,14 +95,14 @@ const ContactDetail = () => {
 
     useEffect(() => {
         fetchContact(id);
-    }, []);
+    }, [id]);
 
     return (
         <>
             <Link to={'/contacts'} className='link'><i className='bi bi-arrow-left'></i> Back to list</Link>
             <div className='profile'>
                 <div className='profile__details'>
-                    <img src={contact.photoUrl || "default.png"} alt={`Profile photo of ${contact.name}`} />
+                    <img src={contact.photoUrl || defaultIcon} alt={contact.name} />
                     <div className='profile__metadata'>
                         <p className='profile__name'>{contact.name}</p>
                         <p className='profile__muted'>JPG, GIF, or PNG. Max size of 10MG</p>
@@ -136,19 +120,19 @@ const ContactDetail = () => {
                                 </div>
                                 <div className="input-box">
                                     <span className="details">Email</span>
-                                    <input type="text" value={contact.email} onChange={onChange} name="email" required />
+                                    <input type="text" value={contact.email} onChange={onChange} name="email"/>
                                 </div>
                                 <div className="input-box">
                                     <span className="details">Phone</span>
-                                    <input type="text" value={contact.phone} onChange={onChange} name="phone" required />
+                                    <input type="text" value={contact.phone} onChange={onChange} name="phone"/>
                                 </div>
                                 <div className="input-box">
                                     <span className="details">Address</span>
-                                    <input type="text" value={contact.address} onChange={onChange} name="address" required />
+                                    <input type="text" value={contact.address} onChange={onChange} name="address" />
                                 </div>
                                 <div className="input-box">
                                     <span className="details">Title</span>
-                                    <input type="text" value={contact.title} onChange={onChange} name="title" required />
+                                    <input type="text" value={contact.title} onChange={onChange} name="title" />
                                 </div>
                                 <div className="input-box">
                                     <span className="details">Account Status</span>
@@ -156,10 +140,8 @@ const ContactDetail = () => {
                                         value={contact.status}
                                         onChange={onChange}
                                         name='status'
-                                        required
                                         className="status-select"
                                     >
-                                        <option value="">-- Select Status --</option>
                                         <option value="ACTIVE">Active</option>
                                         <option value="INACTIVE">Inactive</option>
                                     </select>
@@ -193,7 +175,7 @@ const ContactDetail = () => {
             </dialog>
 
             <form style={{ display: 'none' }}>
-                <input type='file' ref={inputRef} onChange={(event) => updatePhotoo(event.target.files[0])} name='file' accept='image/*' />
+                <input type='file' ref={inputRef} onChange={(event) => updateImage(event.target.files[0])} name='file' accept='image/*' />
             </form>
         </>
     )

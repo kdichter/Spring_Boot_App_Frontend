@@ -1,16 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import defaultIcon from '../assets/default_icon.jpg';
 
 const Contact = ({ contact }) => {
   return (
     <Link to={`/contacts/${contact.id}`} className="contact__item">
             <div className="contact__header">
                 <div className="contact__image">
-                    {/* <img src={contact.photoUrl} alt={contact.name}  /> */}
                     <img
-                        src={contact.photoUrl || '/images/default_icon.jpg'}
+                        src={contact.photoUrl || defaultIcon}
                         alt={contact.name}
-                        onError={(e) => { e.target.src = '/images/default_icon.jpg'; }}
+                        onError={(e) => { e.target.src = defaultIcon; }}
                     />
                 </div>
                 <div className="contact__details">
