@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate} from 'react-router-dom';
 import { isAuthenticated} from './api/AuthService';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -9,8 +9,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-
-
   return (
     <>
       <Routes>
