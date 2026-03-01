@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getContacts, saveContact, updatePhoto, deleteContact } from '../api/ContactService';
-import { logout } from '../api/AuthService';
+import { logout, getUsername } from '../api/AuthService';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from '../components/Header';
 import ContactList from '../components/ContactList';
@@ -12,6 +12,7 @@ const ContactsPage = () => {
     const modalRef = useRef();
     const deleteModalRef = useRef();
     const fileRef = useRef();
+    const currentUser = getUsername();
 
     // Contact list state
     const [data, setData] = useState({});
@@ -32,12 +33,14 @@ const ContactsPage = () => {
     // State for delete modal
     const [selectedContactId, setSelectedContactId] = useState('');
 
+    // All contacts
+    const [allContacts, setAllContacts] = useState([]);
+
     const [searchTerm, setSearchTerm] = useState('');
 
     // Filter contacts based on search
-    const filteredContacts = data?.content?.filter(contact =>
-        contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredContacts = allContacts?.content?.filter(contact =>
+        contact.name.toLowerCase().startsWith(searchTerm.toLowerCase())
     );
 
     const navigate = useNavigate();
@@ -55,6 +58,16 @@ const ContactsPage = () => {
         }
     }
 
+    // Fetch all contacts
+    const getAllContactsForSearch = async () => {
+        try {
+            const { data } = await getContacts(0, 10000)
+            setAllContacts(data);
+        } catch (error) {
+            toastError(error.message);
+        }
+    }
+
     // Handle form input changes
     const onChange = (event) => {
         setValues({ ...values, [event.target.name]: event.target.value });
@@ -65,17 +78,20 @@ const ContactsPage = () => {
         event.preventDefault()
 
         try {
-            const { data } = await saveContact(values);
-
             if (file) {
-                const formData = new FormData();
-                formData.append('id', data.id);
-                formData.append('file', file);
+                try {
+                    const formData = new FormData();
+                    formData.append('id', data.id);
+                    formData.append('file', file);
 
-                await updatePhoto(formData);
+                    await updatePhoto(formData);
+                } catch (error) {
+                    toastError("Photo is too large. Contact was not created.");
+                    return;
+                }
             }
 
-
+            const { data } = await saveContact(values);
 
             // Reset modal and form state
             toggleCreateModal(false);
@@ -88,7 +104,7 @@ const ContactsPage = () => {
                 phone: '',
                 address: '',
                 title: '',
-                status: '',
+                status: 'INACTIVE',
             });
             getAllContacts();
             toastSuccess("Contact Created");
@@ -121,7 +137,12 @@ const ContactsPage = () => {
     };
 
     const toggleDeleteModal = (show) => {
-        show ? deleteModalRef.current.showModal() : deleteModalRef.current.close();
+        if (show) {
+            getAllContactsForSearch()
+            deleteModalRef.current.showModal()
+        } else {
+            deleteModalRef.current.close();
+        } 
     };
 
     const handleLogout = () => {
@@ -140,6 +161,8 @@ const ContactsPage = () => {
                 toggleCreateModal={toggleCreateModal}
                 toggleDeleteModal={toggleDeleteModal}
                 nbOfContacts={data?.totalElements || 0}
+                currentUser={currentUser}
+                onLogout={handleLogout}
             />
             <main className='main'>
                 <div className='container'>
@@ -148,11 +171,6 @@ const ContactsPage = () => {
                         currentPage={currentPage}
                         getAllContacts={getAllContacts}
                     />
-                    <div style={{ textAlign: 'right' }}>
-                        <button onClick={handleLogout} className='btn'>
-                            Logout
-                        </button>
-                    </div>
                 </div>
             </main>
 
@@ -254,12 +272,12 @@ const ContactsPage = () => {
                                 ))}
                             </select>
                             <p className="helper-text">
-                                Showing {filteredContacts?.length || 0} of {data?.totalElements || 0} contacts
+                                Showing {filteredContacts?.length || 0} of {allContacts?.totalElements || 0} contacts
                             </p>
                         </div>
                         <div className="form_footer">
-                            <button onClick={() => toggleDeleteModal(false)} type='button' className="btn btn-danger">Cancel</button>
                             <button type='submit' className="btn">Confirm</button>
+                            <button onClick={() => toggleDeleteModal(false)} type='button' className="btn btn-danger">Cancel</button>
                         </div>
                     </form>
                 </div>
