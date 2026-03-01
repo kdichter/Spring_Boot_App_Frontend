@@ -6,7 +6,6 @@ build/
 
 # environment variables
 .env
-.env.production
 
 # misc
 .DS_Store
