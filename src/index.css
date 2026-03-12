@@ -212,6 +212,10 @@ i {
   z-index: 1000;
 }
 
+.btn.hamburger-btn i {
+    margin-right: 0;
+}
+
 .dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -284,7 +288,7 @@ i {
 }
 
 .btn i {
-    margin-right: 8px;
+    margin-right: 5px;
 }
 
 .btn-danger {
@@ -458,6 +462,7 @@ i {
 	align-items: start;
 	gap: 1rem;
 	margin-top: 2rem;
+	margin-right: 1rem;
 }
 
 .profile__details {
@@ -647,7 +652,7 @@ dialog[open] {
 	appearance: none;  /* Optional: removes default arrow (see below) */
 }
 
-.input-box input:is(:focus, :valid),
+.input-box input:focus,
 .input-box select:focus {
 	border-color: #b9b7ba;
 }     
@@ -662,7 +667,6 @@ input[type=file]::file-selector-button {
 	border: none;
 	box-shadow: 0 0 2px var(--black_80);
 	transition: 0.2s ease-out;
-	/* content: ""; */
 }
 
 input[type=file]::file-selector-button:hover {
@@ -728,6 +732,34 @@ input[type=file]::file-selector-button:hover {
 .form-group input:focus {
     outline: none;
     border-color: #667eea;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 3px 10px;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+.search-bar i {
+    color: #888;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    font-size: 0.8rem;
+    width: 180px;
+    background: transparent;
+}
+
+.link {
+    font-size: 1.2rem;
+	margin: 5px
 }
 
 .login-form button {

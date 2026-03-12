@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useRef, useEffect } from 'react'
 
-const Header = ({ toggleCreateModal, toggleDeleteModal, nbOfContacts, currentUser, onLogout }) => {
+const Header = ({ toggleCreateModal, toggleDeleteModal, nbOfContacts, currentUser, onLogout, onSearch }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
 
@@ -56,13 +56,23 @@ const Header = ({ toggleCreateModal, toggleDeleteModal, nbOfContacts, currentUse
           <h3>Contact List ({nbOfContacts})</h3>
         </div>
 
-        <div className='buttonGroup'>
+        <div className='button-group'>
           <button onClick={() => toggleCreateModal(true)} className='btn'>
             <i className='bi bi-plus-square'></i> Add New Contact
           </button>
           <button onClick={() => toggleDeleteModal(true)} className='btn'>
             <i className='bi bi-x-square'></i> Delete Contact
           </button>
+
+          {/* Search input */}
+          <div className='search-bar'>
+            <i className='bi bi-search'></i>
+            <input
+              type='text'
+              placeholder='Search contacts...'
+              onChange={(e) => onSearch(e.target.value)}
+            />
+          </div>
         </div>
 
       </div>

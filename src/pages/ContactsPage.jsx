@@ -17,6 +17,7 @@ const ContactsPage = () => {
     // Contact list state
     const [data, setData] = useState({});
     const [currentPage, setCurrentPage] = useState(0);
+
     // File state for profile photo
     const [file, setFile] = useState(undefined);
 
@@ -36,11 +37,11 @@ const ContactsPage = () => {
     // All contacts
     const [allContacts, setAllContacts] = useState([]);
 
-    const [searchTerm, setSearchTerm] = useState('');
+    const [deleteSearchTerm, setDeleteSearchTerm] = useState('');
 
     // Filter contacts based on search
     const filteredContacts = allContacts?.content?.filter(contact =>
-        contact.name.toLowerCase().startsWith(searchTerm.toLowerCase())
+        contact.name.toLowerCase().startsWith(deleteSearchTerm.toLowerCase())
     );
 
     const navigate = useNavigate();
@@ -132,6 +133,22 @@ const ContactsPage = () => {
 
     }
 
+    const handleSearch = async (term) => {
+        if (term.trim() === '') {
+            getAllContacts(0);
+        } else {
+            try {
+                const { data } = await getContacts(0, 10000);
+                const filtered = data.content.filter(contact =>
+                    contact.name.toLowerCase().startsWith(term.toLowerCase())
+                );
+                setData({ ...data, content: filtered, totalElements: filtered.length });
+            } catch (error) {
+                toastError(error.message);
+            }
+        }
+    };
+
     const toggleCreateModal = (show) => {
         show ? modalRef.current.showModal() : modalRef.current.close();
     };
@@ -142,7 +159,7 @@ const ContactsPage = () => {
             deleteModalRef.current.showModal()
         } else {
             deleteModalRef.current.close();
-        } 
+        }
     };
 
     const handleLogout = () => {
@@ -163,6 +180,7 @@ const ContactsPage = () => {
                 nbOfContacts={data?.totalElements || 0}
                 currentUser={currentUser}
                 onLogout={handleLogout}
+                onSearch={handleSearch}
             />
             <main className='main'>
                 <div className='container'>
@@ -249,8 +267,8 @@ const ContactsPage = () => {
                             <input
                                 type="text"
                                 placeholder="Type to search..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={deleteSearchTerm}
+                                onChange={(e) => setDeleteSearchTerm(e.target.value)}
                                 className="search-input"
                             />
                         </div>
